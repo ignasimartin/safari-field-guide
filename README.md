@@ -1,5 +1,7 @@
 # Safari Field Guide · Botswana & Zimbabwe
 
+**[Live site](https://ignasimartin.github.io/safari-field-guide/)**
+
 A mobile-friendly field guide to the mammals, reptiles, birds, and trees of Botswana and Zimbabwe. Built as a single-page web app — no server required.
 
 ## Features
@@ -28,4 +30,4 @@ js/app.js        — search, filters, checklist, photo upload
 
 ## License
 
-Personal use.
+[MIT](LICENSE)
