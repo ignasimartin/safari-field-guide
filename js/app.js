@@ -1,4 +1,4 @@
-﻿(function(){
+(function(){
   var root=document.documentElement;
   // theme
   try{var s=localStorage.getItem("sfg-theme"); if(s) root.setAttribute("data-theme",s);}catch(e){}
@@ -73,6 +73,12 @@
     var key=slug(sci)||slug(cname); card.dataset.key=key; card._key=key;
     var wrap=card.querySelector(".ill-wrap"), body=card.querySelector(".card-body");
 
+    // Expedició layout: lift the species name and category tags onto the photo
+    var namesEl=card.querySelector(".names");
+    if(wrap&&namesEl&&namesEl.parentNode!==wrap){ wrap.appendChild(namesEl); }
+    var tagsEl=card.querySelector(".tags");
+    if(wrap&&tagsEl&&tagsEl.children.length&&tagsEl.parentNode!==wrap){ wrap.appendChild(tagsEl); }
+
     // seen toggle
     var btn=document.createElement("button");
     btn.type="button"; btn.className="seen-btn";
@@ -88,19 +94,18 @@
     wrap.appendChild(btn);
     card.classList.toggle("is-seen",!!seen[key]);
 
-    // seen badge (big, always-visible corner indicator)
+    // seen badge (hidden by CSS in this theme, kept for compatibility)
     var badge=document.createElement("span");
     badge.className="seen-badge"; badge.setAttribute("aria-hidden","true");
     badge.innerHTML='<svg viewBox="0 0 24 24"><path class="tick" d="M5 12.5l4.5 4.5L19 7"/></svg>';
     wrap.appendChild(badge);
-
 
     // user photo layer
     var pimg=document.createElement("img");
     pimg.className="user-photo"; pimg.alt="Your photo of "+cname; pimg.style.display="none";
     wrap.appendChild(pimg);
     var ptag=document.createElement("div"); ptag.className="photo-tag"; ptag.style.display="none";
-    ptag.innerHTML='<span>Your photo</span><button type="button" class="photo-x" aria-label="Remove your photo">×</button>';
+    ptag.innerHTML='<span>Your photo</span><button type="button" class="photo-x" aria-label="Remove your photo">&times;</button>';
     wrap.appendChild(ptag);
 
     // add/replace control
