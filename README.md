@@ -6,7 +6,7 @@ A mobile-friendly field guide to the mammals, reptiles, birds, and trees of Bots
 
 ## Features
 
-- **91 species** — 54 mammals & reptiles, 32 birds, 5 trees
+- **138 species** — 74 mammals & reptiles, 56 birds, 8 trees
 - **Search & filter** — find species by name or browse by group (Big Five, Cats, Antelope, Raptors, etc.)
 - **Sighting checklist** — mark species as "Seen" with a progress tracker
 - **Your photos** — attach your own photos to any species card (stored locally in IndexedDB)
