@@ -66,6 +66,7 @@
 
   var CHECK='<svg viewBox="0 0 24 24" aria-hidden="true"><path class="tick" d="M5 12.5l4.5 4.5L19 7"/></svg>';
   var CAM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg>';
+  var EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3.2"/></svg>';
 
   cards.forEach(function(card){
     var sci=(card.querySelector(".sci")||{}).textContent||"";
@@ -83,7 +84,7 @@
     var btn=document.createElement("button");
     btn.type="button"; btn.className="seen-btn";
     btn.setAttribute("aria-pressed", seen[key]?"true":"false");
-    btn.innerHTML=CHECK+'<span>Seen</span>';
+    btn.innerHTML=CHECK; btn.setAttribute("aria-label","Marcar com a vist");
     btn.addEventListener("click",function(){
       if(seen[key]) delete seen[key]; else seen[key]=1;
       var on=!!seen[key];
@@ -110,19 +111,17 @@
 
     // add/replace control
     var addBtn=document.createElement("button");
-    addBtn.type="button"; addBtn.className="addphoto"; addBtn.innerHTML=CAM+'<span>Add your photo</span>';
+    addBtn.type="button"; addBtn.className="addphoto"; addBtn.innerHTML=CAM+'<span>Add your photo</span>'; addBtn.title="Add your photo"; addBtn.setAttribute("aria-label","Add your photo");
     var file=document.createElement("input"); file.type="file"; file.accept="image/*"; file.style.display="none";
-    var anchor=body.querySelector(".photolink");
-    if(anchor&&anchor.nextSibling) body.insertBefore(addBtn,anchor.nextSibling);
-    else if(anchor) body.appendChild(addBtn);
-    else body.insertBefore(addBtn, body.firstChild);
+    var anchor=body.querySelector(".photolink"); if(anchor) anchor.parentNode.removeChild(anchor);
+    wrap.appendChild(addBtn);
     body.appendChild(file);
 
     function showPhoto(data){
       if(data){ pimg.src=data; pimg.style.display=""; ptag.style.display="";
-        addBtn.querySelector("span").textContent="Replace photo"; }
+        addBtn.querySelector("span").textContent="Replace photo"; addBtn.title="Replace photo"; addBtn.setAttribute("aria-label","Replace photo"); }
       else { pimg.removeAttribute("src"); pimg.style.display="none"; ptag.style.display="none";
-        addBtn.querySelector("span").textContent="Add your photo"; }
+        addBtn.querySelector("span").textContent="Add your photo"; addBtn.title="Add your photo"; addBtn.setAttribute("aria-label","Add your photo"); }
     }
     card._showPhoto=showPhoto;
     addBtn.addEventListener("click",function(){file.click();});
