@@ -78,7 +78,7 @@
     var namesEl=card.querySelector(".names");
     if(wrap&&namesEl&&namesEl.parentNode!==wrap){ wrap.appendChild(namesEl); }
     var tagsEl=card.querySelector(".tags");
-    if(wrap&&tagsEl&&tagsEl.children.length&&tagsEl.parentNode!==wrap){ wrap.appendChild(tagsEl); }
+    // tags stay in the body (shown below the photo, on the meta row)
 
     // seen toggle
     var btn=document.createElement("button");
@@ -114,7 +114,10 @@
     addBtn.type="button"; addBtn.className="addphoto"; addBtn.innerHTML=CAM+'<span>Add your photo</span>'; addBtn.title="Add your photo"; addBtn.setAttribute("aria-label","Add your photo");
     var file=document.createElement("input"); file.type="file"; file.accept="image/*"; file.style.display="none";
     var anchor=body.querySelector(".photolink"); if(anchor) anchor.parentNode.removeChild(anchor);
-    wrap.appendChild(addBtn);
+    var metarow=document.createElement("div"); metarow.className="metarow";
+    if(tagsEl){ if(tagsEl.parentNode) tagsEl.parentNode.removeChild(tagsEl); metarow.appendChild(tagsEl); }
+    metarow.appendChild(addBtn);
+    var descEl=body.querySelector(".desc"); body.insertBefore(metarow, descEl);
     body.appendChild(file);
 
     function showPhoto(data){

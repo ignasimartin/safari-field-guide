@@ -166,6 +166,8 @@ main{max-width:940px; margin:0 auto; padding:8px 16px 60px}
 /* category tags, lifted into the image's top-left corner */
 .ill-wrap .tags{position:absolute;top:11px;left:11px;z-index:4;display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin:0}
 .card-body .tags:empty{display:none}
+.metarow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.metarow .tags{position:static;display:flex;gap:6px;flex-wrap:wrap;margin:0}
 .tag{display:inline-flex;align-items:center;gap:7px;font-size:.66rem;font-weight:700;padding:5px 11px;letter-spacing:.04em;text-transform:uppercase;color:#F3EFE1;background:rgba(10,9,6,.55);border:1px solid rgba(255,255,255,.18);border-radius:999px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}.tag::before{content:"";width:7px;height:7px;border-radius:999px;background:var(--gold);flex:none}
 .tag-gold::before{background:var(--gold)}
 .tag-cons::before{background:var(--green)}
@@ -185,10 +187,10 @@ main{max-width:940px; margin:0 auto; padding:8px 16px 60px}
 .photolink:focus-visible{outline:2px solid var(--orange); outline-offset:2px}
 .photolink svg{width:15px; height:15px; flex:none}
 
-.addphoto{position:absolute;z-index:4;bottom:11px;right:11px;width:38px;height:38px;padding:0;display:grid;place-items:center;cursor:pointer;color:#fff;background:rgba(10,9,6,.5);border:1.5px solid rgba(255,255,255,.4);border-radius:999px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);transition:background .15s,border-color .15s}
-.addphoto:hover{background:rgba(10,9,6,.7);border-color:#fff}
+.addphoto{display:inline-flex;align-items:center;gap:7px;margin-left:auto;flex:none;padding:3px 0;cursor:pointer;color:var(--gold);background:none;border:none;font:inherit;font-size:.82rem;font-weight:700;letter-spacing:.01em;transition:opacity .15s}
+.addphoto:hover{opacity:.72}
 .addphoto:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
-.addphoto svg{width:17px;height:17px;flex:none}
+.addphoto svg{width:16px;height:16px;flex:none}
 .addphoto.busy{opacity:.6;pointer-events:none}
 
 .notes{border-top:1px solid var(--line); padding-top:13px}
@@ -247,7 +249,7 @@ footer b{color:var(--ink); font-weight:600}
 .card.is-trauma.is-seen{border-color:var(--crimson); box-shadow:0 0 0 2px var(--crimson), var(--shadow)}
 
 /* icon-only add-photo: keep an accessible label, visually hidden */
-.addphoto span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.addphoto span{white-space:nowrap}
 /* "See photos" removed from the card UI */
 .photolink{display:none}
 
@@ -256,7 +258,7 @@ footer b{color:var(--ink); font-weight:600}
 .card.is-big5.is-seen .card-body{background:linear-gradient(135deg,#8a6a1f,#e7c66a 24%,#b8912f 46%,#f4df9a 62%,#a97f22 86%);color:#241a0e}
 .card.is-big5.is-seen .card-body .notes-h{color:#5a3f0c}
 .card.is-big5.is-seen .card-body .notes{border-top-color:rgba(60,42,10,.4)}
-.card.is-big5.is-seen .card-body .facts li{color:#241a0e}
+.card.is-big5.is-seen .card-body .desc,.card.is-big5.is-seen .card-body .facts li{color:#241a0e}
 .card.is-big5.is-seen .card-body .facts li::before{background:#5a3f0c}
 /* etiqueta families: behaviour (blue) + diet/role (amber) */
 .tag-beh::before{background:#6E8BE0}
@@ -276,3 +278,6 @@ footer b{color:var(--ink); font-weight:600}
 .card.is-trauma.is-seen .card-body .notes{border-top-color:rgba(240,165,156,.3)}
 .card.is-trauma.is-seen .card-body .desc,.card.is-trauma.is-seen .card-body .facts li{color:#F1E7E4}
 .card.is-trauma.is-seen .card-body .facts li::before{background:#E8655A}
+.card.is-big5.is-seen .card-body .addphoto{color:#241a0e}
+.card.is-ugly5.is-seen .card-body .addphoto{color:#2a1708}
+.card.is-trauma.is-seen .card-body .addphoto{color:#F1E7E4}
