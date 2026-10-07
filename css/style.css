@@ -164,17 +164,13 @@ main{max-width:940px; margin:0 auto; padding:8px 16px 60px}
 .sci{font-family:"Archivo",sans-serif; font-style:italic; font-weight:500; font-size:.92rem; color:#E8E3D2; margin:4px 0 0}
 
 /* category tags, lifted into the image's top-left corner */
-.ill-wrap .tags{position:absolute; top:0; left:0; z-index:3; display:flex; flex-direction:column; align-items:flex-start; gap:0; margin:0}
+.ill-wrap .tags{position:absolute;top:11px;left:11px;z-index:4;display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin:0}
 .card-body .tags:empty{display:none}
-.tag{
-  font-size:.66rem; font-weight:700; padding:6px 12px; letter-spacing:.06em; text-transform:uppercase;
-  color:var(--on-accent); background:var(--gold); border:0;
-  border-bottom-right-radius:10px;
-}
-.tag-gold{background:var(--gold); color:var(--on-accent)}
-.tag-cons{background:var(--green); color:var(--on-accent)}
-.tag-warn{background:var(--clay); color:#fff}
-.tag-trauma{background:var(--crimson); color:#fff}
+.tag{display:inline-flex;align-items:center;gap:7px;font-size:.66rem;font-weight:700;padding:5px 11px;letter-spacing:.04em;text-transform:uppercase;color:#F3EFE1;background:rgba(10,9,6,.55);border:1px solid rgba(255,255,255,.18);border-radius:999px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}.tag::before{content:"";width:7px;height:7px;border-radius:999px;background:var(--gold);flex:none}
+.tag-gold::before{background:var(--gold)}
+.tag-cons::before{background:var(--green)}
+.tag-warn::before{background:var(--clay)}
+.tag-trauma::before{background:var(--crimson)}
 
 .card-body{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px}
 .desc{margin:0; font-size:.94rem; color:var(--ink)}
@@ -189,16 +185,10 @@ main{max-width:940px; margin:0 auto; padding:8px 16px 60px}
 .photolink:focus-visible{outline:2px solid var(--orange); outline-offset:2px}
 .photolink svg{width:15px; height:15px; flex:none}
 
-.addphoto{
-  align-self:flex-start; display:inline-flex; align-items:center; gap:7px;
-  font:inherit; font-size:.82rem; font-weight:600; cursor:pointer; color:var(--on-accent);
-  background:var(--orange); border:1px solid var(--orange);
-  padding:8px 14px; border-radius:7px; text-transform:uppercase; letter-spacing:.03em;
-  transition:filter .15s;
-}
-.addphoto:hover{filter:brightness(1.07)}
+.addphoto{position:absolute;z-index:4;bottom:11px;right:11px;width:38px;height:38px;padding:0;display:grid;place-items:center;cursor:pointer;color:#fff;background:rgba(10,9,6,.5);border:1.5px solid rgba(255,255,255,.4);border-radius:999px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);transition:background .15s,border-color .15s}
+.addphoto:hover{background:rgba(10,9,6,.7);border-color:#fff}
 .addphoto:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
-.addphoto svg{width:15px;height:15px;flex:none}
+.addphoto svg{width:17px;height:17px;flex:none}
 .addphoto.busy{opacity:.6;pointer-events:none}
 
 .notes{border-top:1px solid var(--line); padding-top:13px}
@@ -220,16 +210,8 @@ footer b{color:var(--ink); font-weight:600}
 /* ---------- Seen state + user photos ---------- */
 .card.is-seen{border-color:var(--orange); box-shadow:0 0 0 2px var(--orange), var(--shadow)}
 
-.seen-btn{
-  position:absolute; top:11px; right:11px; z-index:4;
-  display:inline-flex; align-items:center; gap:6px;
-  padding:7px 13px 7px 10px; border-radius:7px; cursor:pointer;
-  font:inherit; font-size:.72rem; font-weight:700; line-height:1; text-transform:uppercase; letter-spacing:.04em;
-  background:rgba(10,9,6,.6); color:#fff; border:1px solid rgba(255,255,255,.28);
-  backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
-  transition:background .15s,color .15s,border-color .15s;
-}
-.seen-btn svg{width:15px;height:15px;flex:none}
+.seen-btn{position:absolute;top:11px;right:11px;z-index:4;width:38px;height:38px;padding:0;border-radius:999px;cursor:pointer;display:grid;place-items:center;background:rgba(10,9,6,.5);color:#fff;border:1.5px solid rgba(255,255,255,.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);transition:background .15s,color .15s,border-color .15s}
+.seen-btn svg{width:19px;height:19px;flex:none}
 .seen-btn .tick{stroke:currentColor;stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .seen-btn[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);color:var(--on-accent)}
 .seen-btn:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
@@ -256,10 +238,41 @@ footer b{color:var(--ink); font-weight:600}
 .photo-x:hover{background:rgba(255,255,255,.38)}
 
 /* ---------- Premium card treatments ---------- */
-.card.is-big5{border-color:var(--gold)}
+.card.is-big5{position:relative;border-color:color-mix(in srgb,var(--gold) 45%,var(--line));background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 9%,var(--surface)),var(--surface) 55%)}
 .card.is-big5 .ill-wrap{border-bottom-color:var(--gold)}
 .card.is-big5.is-seen{border-color:var(--gold); box-shadow:0 0 0 2px var(--gold), var(--shadow)}
 
 .card.is-trauma{border-color:var(--crimson)}
 .card.is-trauma .ill-wrap{border-bottom-color:var(--crimson)}
 .card.is-trauma.is-seen{border-color:var(--crimson); box-shadow:0 0 0 2px var(--crimson), var(--shadow)}
+
+/* icon-only add-photo: keep an accessible label, visually hidden */
+.addphoto span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* "See photos" removed from the card UI */
+.photolink{display:none}
+
+/* ===== Big Five "collector card" — metallic gold when seen ===== */
+.card.is-big5.is-seen{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold),var(--shadow)}
+.card.is-big5.is-seen .card-body{background:linear-gradient(135deg,#8a6a1f,#e7c66a 24%,#b8912f 46%,#f4df9a 62%,#a97f22 86%);color:#241a0e}
+.card.is-big5.is-seen .card-body .notes-h{color:#5a3f0c}
+.card.is-big5.is-seen .card-body .notes{border-top-color:rgba(60,42,10,.4)}
+.card.is-big5.is-seen .card-body .facts li{color:#241a0e}
+.card.is-big5.is-seen .card-body .facts li::before{background:#5a3f0c}
+/* etiqueta families: behaviour (blue) + diet/role (amber) */
+.tag-beh::before{background:#6E8BE0}
+.tag-role::before{background:#C98A3C}
+
+/* ===== Collector metals: Ugly Five (bronze) + Trauma (blood-steel) when seen ===== */
+.card.is-ugly5.is-seen{border-color:#C47A3D;box-shadow:0 0 0 2px #C47A3D,var(--shadow)}
+.card.is-ugly5.is-seen .card-body{background:linear-gradient(135deg,#5e3a1e,#b87333 22%,#8a5529 46%,#e3a86e 62%,#6e4322 86%);color:#2a1708}
+.card.is-ugly5.is-seen .card-body .notes-h{color:#49290f}
+.card.is-ugly5.is-seen .card-body .notes{border-top-color:rgba(60,34,12,.45)}
+.card.is-ugly5.is-seen .card-body .desc,.card.is-ugly5.is-seen .card-body .facts li{color:#2a1708}
+.card.is-ugly5.is-seen .card-body .facts li::before{background:#49290f}
+
+.card.is-trauma.is-seen{border-color:#B5382E;box-shadow:0 0 0 2px #B5382E,0 0 22px 1px rgba(181,56,46,.45),var(--shadow)}
+.card.is-trauma.is-seen .card-body{background:linear-gradient(135deg,#1c0f11,#5e2623 20%,#2a1517 46%,#9a433d 60%,#1c0f11 88%);color:#F1E7E4}
+.card.is-trauma.is-seen .card-body .notes-h{color:#F0A59C}
+.card.is-trauma.is-seen .card-body .notes{border-top-color:rgba(240,165,156,.3)}
+.card.is-trauma.is-seen .card-body .desc,.card.is-trauma.is-seen .card-body .facts li{color:#F1E7E4}
+.card.is-trauma.is-seen .card-body .facts li::before{background:#E8655A}
