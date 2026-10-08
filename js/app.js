@@ -39,12 +39,13 @@
   }catch(e){res(false);}});}
 
   // ---- progress ----
-  var prog=document.getElementById("seenProg"), bar=document.getElementById("seenBar");
+  var prog=document.getElementById("seenProg"), bar=document.getElementById("seenBar"), ring=document.getElementById("seenRing");
   function updateProgress(){
     var total=cards.length,n=0;
     cards.forEach(function(c){if(seen[c.dataset.key])n++;});
     if(prog) prog.textContent=n+" / "+total+" seen";
     if(bar) bar.style.width=(total?Math.round(n/total*100):0)+"%";
+    if(ring){ var C=94.25, pct=total?n/total:0; ring.style.strokeDashoffset=(C*(1-pct)).toFixed(2); }
   }
 
   // ---- image downscale ----
@@ -78,7 +79,7 @@
     var namesEl=card.querySelector(".names");
     if(wrap&&namesEl&&namesEl.parentNode!==wrap){ wrap.appendChild(namesEl); }
     var tagsEl=card.querySelector(".tags");
-    if(wrap&&tagsEl&&tagsEl.children.length&&tagsEl.parentNode!==wrap){ wrap.appendChild(tagsEl); }
+    // tags stay in the body (shown below the photo, on the meta row)
 
     // seen toggle
     var btn=document.createElement("button");
@@ -114,7 +115,10 @@
     addBtn.type="button"; addBtn.className="addphoto"; addBtn.innerHTML=CAM+'<span>Add your photo</span>'; addBtn.title="Add your photo"; addBtn.setAttribute("aria-label","Add your photo");
     var file=document.createElement("input"); file.type="file"; file.accept="image/*"; file.style.display="none";
     var anchor=body.querySelector(".photolink"); if(anchor) anchor.parentNode.removeChild(anchor);
-    wrap.appendChild(addBtn);
+    var metarow=document.createElement("div"); metarow.className="metarow";
+    if(tagsEl){ if(tagsEl.parentNode) tagsEl.parentNode.removeChild(tagsEl); metarow.appendChild(tagsEl); }
+    metarow.appendChild(addBtn);
+    var descEl=body.querySelector(".desc"); body.insertBefore(metarow, descEl);
     body.appendChild(file);
 
     function showPhoto(data){
@@ -144,6 +148,20 @@
   var chips=[].slice.call(document.querySelectorAll(".chip"));
   var segs=[].slice.call(document.querySelectorAll(".seg"));
   var filter="All", term="", seenMode="all";
+  var mainEl=document.querySelector("main");
+  var segGroup=document.getElementById("segGroup");
+  var segInd=segGroup?segGroup.querySelector(".seg-ind"):null;
+  var ctxbar=document.getElementById("ctxbar"), ctxname=document.getElementById("ctxname"), ctxclear=document.getElementById("ctxclear");
+  function moveSegInd(){ if(!segGroup||!segInd)return; var a=segGroup.querySelector('.seg[aria-pressed="true"]')||segGroup.querySelector(".seg"); if(!a)return; segInd.style.width=a.offsetWidth+"px"; segInd.style.transform="translateX("+a.offsetLeft+"px)"; }
+  function updateContext(shown){
+    if(!ctxbar)return;
+    if(filter==="All"){ ctxbar.hidden=true; if(mainEl)mainEl.classList.remove("filtered"); return; }
+    if(mainEl)mainEl.classList.add("filtered");
+    var noun=seenMode==="unseen"?"to see":(seenMode==="seen"?"seen":"species");
+    if(ctxname) ctxname.innerHTML=filter.replace(/&/g,"&amp;")+' <em>\u00b7 '+shown+' '+noun+'</em>';
+    ctxbar.hidden=false;
+  }
+  if(ctxclear) ctxclear.addEventListener("click",function(){ var a=chips.filter(function(c){return c.getAttribute("data-filter")==="All";})[0]; if(a)a.click(); });
   function apply(){
     var shown=0;
     cards.forEach(function(c){
@@ -161,15 +179,11 @@
       if(cnt) cnt.textContent=[].slice.call(sec.querySelectorAll(".card")).filter(function(c){return c.style.display!=="none";}).length;
     });
     empty.classList.toggle("show",shown===0);
+    updateContext(shown);
     updateHeaders();
   }
   function updateHeaders(){
-    var activeChip = chips.filter(function(c){return c.getAttribute("data-filter")===filter;})[0];
-    var label = activeChip ? activeChip.textContent.trim() : null;
-    document.querySelectorAll(".section-head h2").forEach(function(h2){
-      var def = h2.getAttribute("data-default");
-      h2.innerHTML = (filter==="All"||!label) ? def : label;
-    });
+    document.querySelectorAll(".section-head h2").forEach(function(h2){ h2.innerHTML=h2.getAttribute("data-default"); });
   }
   q.addEventListener("input",function(){term=q.value.trim().toLowerCase(); apply();});
   chips.forEach(function(ch){ch.addEventListener("click",function(){
@@ -180,7 +194,7 @@
   });});
   segs.forEach(function(sg){sg.addEventListener("click",function(){
     segs.forEach(function(x){x.setAttribute("aria-pressed","false");});
-    sg.setAttribute("aria-pressed","true"); seenMode=sg.getAttribute("data-seen"); apply();
+    sg.setAttribute("aria-pressed","true"); seenMode=sg.getAttribute("data-seen"); moveSegInd(); apply();
   });});
 
   var reset=document.getElementById("resetSeen");
@@ -191,10 +205,24 @@
     updateProgress(); apply();
   });
 
+  moveSegInd();
+  window.addEventListener("load",moveSegInd);
+  window.addEventListener("resize",moveSegInd);
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(moveSegInd);}
   updateProgress();
   openDB().then(function(d){ db=d;
     cards.forEach(function(c){
       idbGet(c._key).then(function(data){ if(data) c._showPhoto(data); });
     });
   });
+  (function(){
+    var wrap=document.querySelector(".chips-wrap"); if(!wrap) return;
+    var sc=wrap.querySelector(".chips"); if(!sc) return;
+    function upd(){ var end=(sc.scrollLeft+sc.clientWidth>=sc.scrollWidth-2)||(sc.scrollWidth<=sc.clientWidth+1); wrap.classList.toggle("at-end",end); }
+    sc.addEventListener("scroll",upd,{passive:true});
+    sc.addEventListener("wheel",function(e){ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&sc.scrollWidth>sc.clientWidth){ sc.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
+    window.addEventListener("resize",upd);
+    if(document.fonts&&document.fonts.ready){document.fonts.ready.then(upd);}
+    upd();
+  })();
 })();
