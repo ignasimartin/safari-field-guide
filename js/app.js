@@ -41,8 +41,8 @@
   // ---- progress ----
   var prog=document.getElementById("seenProg"), bar=document.getElementById("seenBar"), ring=document.getElementById("seenRing");
   function updateProgress(){
-    var total=cards.length,n=0;
-    cards.forEach(function(c){if(seen[c.dataset.key])n++;});
+    var total=0,n=0;
+    cards.forEach(function(c){ if(inCountry(c)){ total++; if(seen[c.dataset.key])n++; } });
     if(prog) prog.textContent=n+" / "+total+" seen";
     if(bar) bar.style.width=(total?Math.round(n/total*100):0)+"%";
     if(ring){ var C=94.25, pct=total?n/total:0; ring.style.strokeDashoffset=(C*(1-pct)).toFixed(2); }
@@ -73,6 +73,7 @@
     var sci=(card.querySelector(".sci")||{}).textContent||"";
     var cname=(card.querySelector(".cname")||{}).textContent||"animal";
     var key=slug(sci)||slug(cname); card.dataset.key=key; card._key=key;
+    card._countries=(card.getAttribute("data-countries")||"").split(/\s+/).filter(Boolean);
     var wrap=card.querySelector(".ill-wrap"), body=card.querySelector(".card-body");
 
     // Expedició layout: lift the species name and category tags onto the photo
@@ -148,6 +149,10 @@
   var chips=[].slice.call(document.querySelectorAll(".chip"));
   var segs=[].slice.call(document.querySelectorAll(".seg"));
   var filter="All", term="", seenMode="all";
+  var countrySel=new Set();
+  try{var _cs=JSON.parse(localStorage.getItem("sfg-countries-v1")||"[]"); if(Array.isArray(_cs))_cs.forEach(function(x){countrySel.add(x);});}catch(e){}
+  function saveCountries(){try{localStorage.setItem("sfg-countries-v1",JSON.stringify([].slice.call(countrySel)));}catch(e){}}
+  function inCountry(c){ if(!countrySel.size) return true; var cc=c._countries||[]; for(var i=0;i<cc.length;i++){ if(countrySel.has(cc[i])) return true; } return false; }
   var mainEl=document.querySelector("main");
   var segGroup=document.getElementById("segGroup");
   var segInd=segGroup?segGroup.querySelector(".seg-ind"):null;
@@ -170,7 +175,8 @@
       var okT=!term||(c.getAttribute("data-search")||"").indexOf(term)>-1;
       var isSeen=!!seen[c.dataset.key];
       var okS=seenMode==="all"||(seenMode==="seen"&&isSeen)||(seenMode==="unseen"&&!isSeen);
-      var vis=okF&&okT&&okS; c.style.display=vis?"":"none"; if(vis) shown++;
+      var okC=inCountry(c);
+      var vis=okF&&okT&&okS&&okC; c.style.display=vis?"":"none"; if(vis) shown++;
     });
     document.querySelectorAll("section").forEach(function(sec){
       var any=[].slice.call(sec.querySelectorAll(".card")).some(function(c){return c.style.display!=="none";});
@@ -205,11 +211,27 @@
     updateProgress(); apply();
   });
 
+  // ---- country selector ----
+  var cbtns=[].slice.call(document.querySelectorAll(".cbtn"));
+  var cbClear=document.getElementById("cbClear");
+  function syncCountryUI(){
+    cbtns.forEach(function(b){ b.setAttribute("aria-pressed", countrySel.has(b.getAttribute("data-country"))?"true":"false"); });
+    if(cbClear) cbClear.hidden=countrySel.size===0;
+  }
+  cbtns.forEach(function(b){ b.addEventListener("click",function(){
+    var code=b.getAttribute("data-country");
+    if(countrySel.has(code)) countrySel.delete(code); else countrySel.add(code);
+    saveCountries(); syncCountryUI(); updateProgress(); apply();
+  });});
+  if(cbClear) cbClear.addEventListener("click",function(){ countrySel.clear(); saveCountries(); syncCountryUI(); updateProgress(); apply(); });
+  syncCountryUI();
+
   moveSegInd();
   window.addEventListener("load",moveSegInd);
   window.addEventListener("resize",moveSegInd);
   if(document.fonts&&document.fonts.ready){document.fonts.ready.then(moveSegInd);}
   updateProgress();
+  apply();
   openDB().then(function(d){ db=d;
     cards.forEach(function(c){
       idbGet(c._key).then(function(data){ if(data) c._showPhoto(data); });

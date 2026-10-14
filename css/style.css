@@ -331,3 +331,33 @@ main.filtered>section:first-of-type{margin-top:4px}
 .chips-wrap{position:relative;min-width:0}
 .chips-wrap .chip-fade{position:absolute;top:0;right:0;bottom:6px;width:30px;pointer-events:none;background:linear-gradient(to right,transparent,var(--surface));transition:opacity .18s;z-index:1}
 .chips-wrap.at-end .chip-fade{opacity:0}
+
+/* ---------- Country selector ---------- */
+.countrybar{
+  display:flex; align-items:center; gap:10px;
+  max-width:940px; margin:0 auto; padding:10px 16px 6px; flex-wrap:nowrap;
+}
+.cb-lab{
+  flex:none; font-family:"Archivo",sans-serif; font-size:.68rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.14em; color:var(--muted);
+}
+.country-chips{
+  display:flex; gap:7px; overflow-x:auto; min-width:0; flex:1;
+  padding-bottom:4px; scrollbar-width:none;
+}
+.country-chips::-webkit-scrollbar{display:none}
+.cbtn{
+  flex:none; display:inline-flex; align-items:center; gap:6px;
+  padding:7px 12px; border-radius:20px; border:1px solid var(--line);
+  background:transparent; color:var(--muted); font:inherit; font-size:.8rem; font-weight:600;
+  cursor:pointer; white-space:nowrap; transition:color .15s,border-color .15s,background .15s;
+}
+.cbtn .cflag{font-size:1rem; line-height:1}
+.cbtn:hover{color:var(--ink); border-color:var(--muted)}
+.cbtn[aria-pressed="true"]{background:var(--green); border-color:var(--green); color:var(--on-accent)}
+.cb-clear{
+  flex:none; padding:6px 12px; border-radius:20px; border:1px solid var(--line);
+  background:transparent; color:var(--muted); font:inherit; font-size:.74rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.05em; cursor:pointer;
+}
+.cb-clear:hover{color:var(--crimson); border-color:var(--crimson)}
