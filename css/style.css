@@ -361,3 +361,29 @@ main.filtered>section:first-of-type{margin-top:4px}
   text-transform:uppercase; letter-spacing:.05em; cursor:pointer;
 }
 .cb-clear:hover{color:var(--crimson); border-color:var(--crimson)}
+
+/* ---------- User photo carousel (multiple per animal) ---------- */
+.photo-del{
+  position:absolute; left:11px; top:11px; z-index:5;
+  width:30px;height:30px;border-radius:50%;border:0;cursor:pointer;
+  background:rgba(10,9,6,.55);color:#fff;font-size:20px;line-height:1;
+  place-items:center;padding:0;
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transition:background .15s;
+}
+.photo-del:hover{background:var(--crimson)}
+.photo-nav{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:5;
+  width:34px;height:34px;border-radius:50%;border:0;cursor:pointer;
+  background:rgba(10,9,6,.5);color:#fff;place-items:center;padding:0;
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transition:background .15s;
+}
+.photo-nav:hover{background:rgba(10,9,6,.8)}
+.photo-nav svg{width:20px;height:20px}
+.photo-nav.prev{left:8px}
+.photo-nav.next{right:8px}
+.photo-count{
+  position:absolute; right:11px; bottom:11px; z-index:5;
+  padding:2px 9px;border-radius:11px;
+  background:rgba(10,9,6,.58);color:#F3EFE1;font-size:.68rem;font-weight:600;line-height:1.6;
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+}

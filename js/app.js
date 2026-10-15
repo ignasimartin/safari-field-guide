@@ -103,18 +103,29 @@
     badge.innerHTML='<svg viewBox="0 0 24 24"><path class="tick" d="M5 12.5l4.5 4.5L19 7"/></svg>';
     wrap.appendChild(badge);
 
-    // user photo layer
+    // user photos (multiple per animal) — carousel in the hero image
     var pimg=document.createElement("img");
     pimg.className="user-photo"; pimg.alt="Your photo of "+cname; pimg.style.display="none";
     wrap.appendChild(pimg);
-    var ptag=document.createElement("div"); ptag.className="photo-tag"; ptag.style.display="none";
-    ptag.innerHTML='<span>Your photo</span><button type="button" class="photo-x" aria-label="Remove your photo">&times;</button>';
-    wrap.appendChild(ptag);
+    var pdel=document.createElement("button");
+    pdel.type="button"; pdel.className="photo-del"; pdel.setAttribute("aria-label","Remove this photo"); pdel.innerHTML="&times;"; pdel.style.display="none";
+    wrap.appendChild(pdel);
+    var CHEVL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
+    var CHEVR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';
+    var pprev=document.createElement("button");
+    pprev.type="button"; pprev.className="photo-nav prev"; pprev.setAttribute("aria-label","Previous photo"); pprev.innerHTML=CHEVL; pprev.style.display="none";
+    wrap.appendChild(pprev);
+    var pnext=document.createElement("button");
+    pnext.type="button"; pnext.className="photo-nav next"; pnext.setAttribute("aria-label","Next photo"); pnext.innerHTML=CHEVR; pnext.style.display="none";
+    wrap.appendChild(pnext);
+    var pcount=document.createElement("span");
+    pcount.className="photo-count"; pcount.style.display="none";
+    wrap.appendChild(pcount);
 
-    // add/replace control
+    // add control (appends; accepts several files at once)
     var addBtn=document.createElement("button");
     addBtn.type="button"; addBtn.className="addphoto"; addBtn.innerHTML=CAM+'<span>Add your photo</span>'; addBtn.title="Add your photo"; addBtn.setAttribute("aria-label","Add your photo");
-    var file=document.createElement("input"); file.type="file"; file.accept="image/*"; file.style.display="none";
+    var file=document.createElement("input"); file.type="file"; file.accept="image/*"; file.multiple=true; file.style.display="none";
     var anchor=body.querySelector(".photolink"); if(anchor) anchor.parentNode.removeChild(anchor);
     var metarow=document.createElement("div"); metarow.className="metarow";
     if(tagsEl){ if(tagsEl.parentNode) tagsEl.parentNode.removeChild(tagsEl); metarow.appendChild(tagsEl); }
@@ -122,26 +133,53 @@
     var descEl=body.querySelector(".desc"); body.insertBefore(metarow, descEl);
     body.appendChild(file);
 
-    function showPhoto(data){
-      if(data){ pimg.src=data; pimg.style.display=""; ptag.style.display="";
-        addBtn.querySelector("span").textContent="Replace photo"; addBtn.title="Replace photo"; addBtn.setAttribute("aria-label","Replace photo"); }
-      else { pimg.removeAttribute("src"); pimg.style.display="none"; ptag.style.display="none";
-        addBtn.querySelector("span").textContent="Add your photo"; addBtn.title="Add your photo"; addBtn.setAttribute("aria-label","Add your photo"); }
+    var photos=[], cur=0;
+    function savePhotos(){
+      if(photos.length){ idbSet(key,photos).then(function(ok){ if(!ok){try{alert("Photos shown for now, but this browser wouldn't save them for next time.");}catch(e){}} }); }
+      else { idbDel(key); }
     }
-    card._showPhoto=showPhoto;
+    function renderPhotos(){
+      var n=photos.length;
+      if(cur>=n) cur=n-1; if(cur<0) cur=0;
+      if(n){
+        pimg.src=photos[cur]; pimg.style.display=""; pdel.style.display="grid";
+        addBtn.querySelector("span").textContent="Add another photo";
+      } else {
+        pimg.removeAttribute("src"); pimg.style.display="none"; pdel.style.display="none";
+        addBtn.querySelector("span").textContent="Add your photo";
+      }
+      var multi=n>1;
+      pprev.style.display=multi?"grid":"none";
+      pnext.style.display=multi?"grid":"none";
+      pcount.style.display=multi?"block":"none";
+      if(multi) pcount.textContent=(cur+1)+" / "+n;
+    }
+    function nav(d){ var n=photos.length; if(!n)return; cur=(cur+d+n)%n; renderPhotos(); }
+    card._loadPhotos=function(v){ photos = !v?[]:(typeof v==="string"?[v]:(Array.isArray(v)?v.slice():[])); cur=0; renderPhotos(); };
+
+    pprev.addEventListener("click",function(){ nav(-1); });
+    pnext.addEventListener("click",function(){ nav(1); });
+    pdel.addEventListener("click",function(){ if(!photos.length)return; photos.splice(cur,1); savePhotos(); renderPhotos(); });
+
     addBtn.addEventListener("click",function(){file.click();});
     file.addEventListener("change",function(){
-      var f=file.files&&file.files[0]; if(!f){return;}
+      var fs=file.files?[].slice.call(file.files):[]; if(!fs.length){return;}
       addBtn.classList.add("busy");
-      resizeImage(f,function(data){
-        addBtn.classList.remove("busy");
-        if(!data){alert("Sorry, that image couldn't be added.");return;}
-        showPhoto(data);
-        idbSet(key,data).then(function(ok){ if(!ok){try{alert("Photo shown for now, but this browser wouldn't save it for next time.");}catch(e){}} });
+      var slots=new Array(fs.length), pending=fs.length, anyFail=false;
+      fs.forEach(function(f,idx){
+        resizeImage(f,function(data){
+          if(data) slots[idx]=data; else anyFail=true;
+          if(--pending===0){
+            addBtn.classList.remove("busy");
+            slots.forEach(function(s){ if(s) photos.push(s); });
+            cur=photos.length-1;
+            renderPhotos(); savePhotos();
+            if(anyFail){try{alert("Some images couldn't be added.");}catch(e){}}
+          }
+        });
       });
       file.value="";
     });
-    ptag.querySelector(".photo-x").addEventListener("click",function(){ showPhoto(null); idbDel(key); });
   });
 
   // ---- search + filters ----
@@ -152,7 +190,7 @@
   var countrySel=new Set();
   try{var _cs=JSON.parse(localStorage.getItem("sfg-countries-v1")||"[]"); if(Array.isArray(_cs))_cs.forEach(function(x){countrySel.add(x);});}catch(e){}
   function saveCountries(){try{localStorage.setItem("sfg-countries-v1",JSON.stringify([].slice.call(countrySel)));}catch(e){}}
-  function inCountry(c){ if(!countrySel.size) return true; var cc=c._countries||[]; for(var i=0;i<cc.length;i++){ if(countrySel.has(cc[i])) return true; } return false; }
+  function inCountry(c){ if(!countrySel.size) return false; var cc=c._countries||[]; for(var i=0;i<cc.length;i++){ if(countrySel.has(cc[i])) return true; } return false; }
   var mainEl=document.querySelector("main");
   var segGroup=document.getElementById("segGroup");
   var segInd=segGroup?segGroup.querySelector(".seg-ind"):null;
@@ -185,6 +223,7 @@
       if(cnt) cnt.textContent=[].slice.call(sec.querySelectorAll(".card")).filter(function(c){return c.style.display!=="none";}).length;
     });
     empty.classList.toggle("show",shown===0);
+    if(shown===0){ empty.textContent = countrySel.size ? "No species match that filter. Try another name or clear the filter." : "Select a country above to see its animals."; }
     updateContext(shown);
     updateHeaders();
   }
@@ -234,7 +273,7 @@
   apply();
   openDB().then(function(d){ db=d;
     cards.forEach(function(c){
-      idbGet(c._key).then(function(data){ if(data) c._showPhoto(data); });
+      idbGet(c._key).then(function(data){ if(data) c._loadPhotos(data); });
     });
   });
   (function(){

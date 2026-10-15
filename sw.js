@@ -1,5 +1,5 @@
 /* Safari Field Guide service worker — offline app shell + photos */
-const CACHE = 'sfg-v4';
+const CACHE = 'sfg-v7';
 const CORE = [
   'css/style.css',
   'js/app.js',
@@ -175,6 +175,13 @@ const IMAGES = [
   'img/shoebill.jpg',
   'img/somali-ostrich.jpg',
   'img/abyssinian-ground-hornbill.jpg',
+  'img/red-tailed-monkey.jpg',
+  'img/black-and-white-colobus.jpg',
+  'img/de-brazza-s-monkey.jpg',
+  'img/grevy-s-zebra.jpg',
+  'img/mountain-zebra.jpg',
+  'img/reticulated-giraffe.jpg',
+  'img/blue-monkey-samango.jpg',
 ];
 
 self.addEventListener('install', (e) => {
